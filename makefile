@@ -4,7 +4,7 @@ install:
 lint:
 	npx eslint
 
-gendifff:
+gendiff:
 	node bin/gendiff.js
 
 publish:
