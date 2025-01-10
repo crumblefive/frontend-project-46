@@ -13,7 +13,7 @@ program
   .option('-f, --format <type>', 'output format', 'stylish')
   .action((filepath1, filepath2) => {
     const options = program.opts();
-    const result = gendiff(filepath1, filepath2, options)
+    const result = gendiff(filepath1, filepath2, options.format)
     console.log(result);
   });
   
