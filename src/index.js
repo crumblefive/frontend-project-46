@@ -3,9 +3,11 @@ import yaml from 'js-yaml';
 import path from 'path';
 import _ from 'lodash';
 
-const data1 = {
-    added: '+',
-    deleted: '-',
+const operation = {
+    added: 'added',
+    deleted: 'deleted',
+    updated: 'updated',
+    unchanged: 'unchanged'
 }
 
 const getFileData = (filepath) => {
@@ -34,19 +36,45 @@ const compare = (obj1, obj2) => {
         const value2 = obj2[key];
 
         if (value1 === value2) {
-            return null;
+            return {key, value: value1, type: operation.unchanged};
         }
         if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
-            return `  - ${key}: ${value1}\n  + ${key}: ${value2}`;
+            return {key, value: value1, value2: value2, type: operation.updated};
         }
         if (obj1.hasOwnProperty(key)) {
-            return `  - ${key}: ${value1}`;
+            return {key, value: value1, type: operation.deleted};
         }
-        return `  + ${key}: ${value2}`; 
-    }).filter(Boolean);
+        return {key, value: value2, type: operation.added};
+    });
 
-    return `{\n${result.join('\n')}\n}`;
+    return result;
 };
+
+const json = (data) => {
+    const result = data.map((keyInfo) => {
+    const type = keyInfo.type;    
+    switch (type){
+        case 'added': 
+        return ` + ${keyInfo.key}: ${keyInfo.value}`;
+        break;
+
+        case 'deleted': 
+        return ` - ${keyInfo.key}: ${keyInfo.value}`;
+        break; 
+
+        case 'updated': 
+        return `   ${keyInfo.key}: ${keyInfo.value2}`;
+        break;
+
+        default: 
+        return null; 
+        break;
+    }}
+
+).filter(Boolean);
+return `{\n${result.join('\n')}\n}`
+}
+ 
 
 const gendiff = (filepath1, filepath2, options) => {
     const fileData1 = getFileData(path.resolve(filepath1));
@@ -54,7 +82,8 @@ const gendiff = (filepath1, filepath2, options) => {
 
     const obj1 = parser(fileData1.file , fileData1.extention);
     const obj2 = parser(fileData2.file , fileData2.extention); 
-    return compare (obj1 , obj2); 
+    const data = compare (obj1 , obj2)
+    return json(compare (obj1 , obj2)); 
 }
 
 export default gendiff; 
