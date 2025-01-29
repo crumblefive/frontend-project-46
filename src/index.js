@@ -7,7 +7,8 @@ const operation = {
     added: 'added',
     deleted: 'deleted',
     updated: 'updated',
-    unchanged: 'unchanged'
+    unchanged: 'unchanged',
+    nested: 'nested',
 }
 
 const getFileData = (filepath) => {
@@ -35,6 +36,10 @@ const compare = (obj1, obj2) => {
         const value1 = obj1[key];
         const value2 = obj2[key];
 
+        if(_.isObject(value1) && _.isObject(value2)){
+            return {value: compare(value1, value2) , type: operation.nested, key};
+        }
+        
         if (value1 === value2) {
             return {key, value: value1, type: operation.unchanged};
         }
@@ -50,20 +55,28 @@ const compare = (obj1, obj2) => {
     return result;
 };
 
-const json = (data) => {
+const json = (data , count = 0) => {
+    const tab = '    '.repeat(count);   
     const result = data.map((keyInfo) => {
-    const type = keyInfo.type;    
+    const type = keyInfo.type; 
     switch (type){
         case 'added': 
-        return ` + ${keyInfo.key}: ${keyInfo.value}`;
+        return tab + `  + ${keyInfo.key}: ${keyInfo.value}`;
         break;
 
         case 'deleted': 
-        return ` - ${keyInfo.key}: ${keyInfo.value}`;
+        return tab + `  - ${keyInfo.key}: ${keyInfo.value}`;
         break; 
 
+        case 'unchanged': 
+        return tab + `    ${keyInfo.key}: ${keyInfo.value}`;
+        break;
+
         case 'updated': 
-        return `   ${keyInfo.key}: ${keyInfo.value2}`;
+        return tab + `  - ${keyInfo.key}: ${keyInfo.value}\n${tab}  + ${keyInfo.key}: ${keyInfo.value2}`;
+
+        case 'nested': 
+        return json(keyInfo.value, count +1);
         break;
 
         default: 
@@ -72,7 +85,7 @@ const json = (data) => {
     }}
 
 ).filter(Boolean);
-return `{\n${result.join('\n')}\n}`
+return `${tab}{\n${result.join('\n')}\n${tab}}`
 }
  
 
@@ -82,7 +95,6 @@ const gendiff = (filepath1, filepath2, options) => {
 
     const obj1 = parser(fileData1.file , fileData1.extention);
     const obj2 = parser(fileData2.file , fileData2.extention); 
-    const data = compare (obj1 , obj2)
     return json(compare (obj1 , obj2)); 
 }
 
