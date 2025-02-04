@@ -11,6 +11,7 @@ const operation = {
     nested: 'nested',
 }
 
+
 const getFileData = (filepath) => {
 const file = fs.readFileSync(filepath);
 const parts = filepath.split('.');
@@ -23,7 +24,7 @@ if (extention === 'json'){
     return JSON.parse(file);
 }
 
-if (extention === 'yaml') {
+if (extention === 'yaml' || 'yml') {
     return yaml.load(file);
 }
 };
@@ -55,28 +56,41 @@ const compare = (obj1, obj2) => {
     return result;
 };
 
-const json = (data , count = 0) => {
+const toStr = (value, count) => {
+    const tab = '    '.repeat(count + 2);
+    
+    if (!_.isObject(value)) {
+        return value;
+    }
+    const lines = Object.keys(value).map((key) => {
+       return `${tab}${key}: ${toStr(value[key], count + 1)}`
+    })
+    return `{\n${lines.join('\n')}\n${tab}}`
+    
+}
+
+const stylish = (data , count = 0) => {
     const tab = '    '.repeat(count);   
     const result = data.map((keyInfo) => {
     const type = keyInfo.type; 
     switch (type){
         case 'added': 
-        return tab + `  + ${keyInfo.key}: ${keyInfo.value}`;
+        return tab + `  + ${keyInfo.key}: ${toStr(keyInfo.value, count)}`;
         break;
 
         case 'deleted': 
-        return tab + `  - ${keyInfo.key}: ${keyInfo.value}`;
+        return tab + `  - ${keyInfo.key}: ${toStr(keyInfo.value, count)}`;
         break; 
 
         case 'unchanged': 
-        return tab + `    ${keyInfo.key}: ${keyInfo.value}`;
+        return tab + `    ${keyInfo.key}: ${toStr(keyInfo.value, count)}`;
         break;
 
         case 'updated': 
-        return tab + `  - ${keyInfo.key}: ${keyInfo.value}\n${tab}  + ${keyInfo.key}: ${keyInfo.value2}`;
+        return tab + `  - ${keyInfo.key}: ${toStr(keyInfo.value, count)}\n${tab}  + ${keyInfo.key}: ${toStr(keyInfo.value2, count)}`;
 
         case 'nested': 
-        return json(keyInfo.value, count +1);
+        return stylish(keyInfo.value, count +1);
         break;
 
         default: 
@@ -87,7 +101,34 @@ const json = (data , count = 0) => {
 ).filter(Boolean);
 return `${tab}{\n${result.join('\n')}\n${tab}}`
 }
- 
+
+const plain = (data, count = 0) => {
+    const result = data.map((keyInfo) => {
+        const type = keyInfo.type;
+        switch (type) {
+            case 'added':
+                return `Property '${keyInfo.key}' was added with value: ${keyInfo.value}`;
+                
+            case 'deleted':
+                return `Property '${keyInfo.key}' was removed`;
+                
+            case 'unchanged':
+                return null;
+
+            case 'updated':
+                return `Property '${keyInfo.key}' was updated. From '${keyInfo.value}' to '${keyInfo.value2}'`;
+
+            case 'nested':
+                return plain(keyInfo.value, count + 1);
+
+            default:
+                return null;
+        }
+    }).filter(Boolean);
+
+    return result.join('\n');
+};
+
 
 const gendiff = (filepath1, filepath2, options) => {
     const fileData1 = getFileData(path.resolve(filepath1));
@@ -95,7 +136,7 @@ const gendiff = (filepath1, filepath2, options) => {
 
     const obj1 = parser(fileData1.file , fileData1.extention);
     const obj2 = parser(fileData2.file , fileData2.extention); 
-    return json(compare (obj1 , obj2)); 
+    return stylish(compare (obj1 , obj2)); 
 }
 
-export default gendiff; 
+export default gendiff;
