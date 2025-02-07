@@ -24,7 +24,7 @@ if (extention === 'json'){
     return JSON.parse(file);
 }
 
-if (extention === 'yaml' || 'yml') {
+if (extention === 'yaml' || extention === 'yml') {
     return yaml.load(file);
 }
 };
@@ -76,22 +76,18 @@ const stylish = (data , count = 0) => {
     switch (type){
         case 'added': 
         return tab + `  + ${keyInfo.key}: ${toStr(keyInfo.value, count)}`;
-        break;
-
+        
         case 'deleted': 
         return tab + `  - ${keyInfo.key}: ${toStr(keyInfo.value, count)}`;
-        break; 
 
         case 'unchanged': 
         return tab + `    ${keyInfo.key}: ${toStr(keyInfo.value, count)}`;
-        break;
 
         case 'updated': 
         return tab + `  - ${keyInfo.key}: ${toStr(keyInfo.value, count)}\n${tab}  + ${keyInfo.key}: ${toStr(keyInfo.value2, count)}`;
 
         case 'nested': 
         return stylish(keyInfo.value, count +1);
-        break;
 
         default: 
         return null; 
@@ -128,15 +124,31 @@ const plain = (data, count = 0) => {
 
     return result.join('\n');
 };
+const json = (data) => JSON.stringify(data);
 
+const formatData = (data, format) => {
+    switch(format) {
+        case 'plain':
+            return plain(data);
+        case 'stylish':
+            return stylish(data);
+        case 'json':
+            return json(data);
+        
+        default: throw new Error (`Unknown format: ${format}`)
+    }
+};
 
 const gendiff = (filepath1, filepath2, options) => {
     const fileData1 = getFileData(path.resolve(filepath1));
     const fileData2 = getFileData(path.resolve(filepath2));
 
     const obj1 = parser(fileData1.file , fileData1.extention);
-    const obj2 = parser(fileData2.file , fileData2.extention); 
-    return stylish(compare (obj1 , obj2)); 
+    const obj2 = parser(fileData2.file , fileData2.extention);
+
+    const result = compare(obj1, obj2);
+    const finalResult = formatData(result, options);
+    return finalResult;
 }
 
 export default gendiff;
