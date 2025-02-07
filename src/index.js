@@ -22,11 +22,11 @@ return { file , extention };
 const parser = (file, extention) => {
 if (extention === 'json'){
     return JSON.parse(file);
-}
+    }
 
-if (extention === 'yaml' || extention === 'yml') {
+if (extention === 'yaml' || extention === 'yml'){
     return yaml.load(file);
-}
+    }
 };
 
 const compare = (obj1, obj2) => {
@@ -91,12 +91,11 @@ const stylish = (data , count = 0) => {
 
         default: 
         return null; 
-        break;
-    }}
-
+    }
+}
 ).filter(Boolean);
 return `${tab}{\n${result.join('\n')}\n${tab}}`
-}
+};
 
 const plain = (data, count = 0) => {
     const result = data.map((keyInfo) => {
