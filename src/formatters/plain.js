@@ -1,21 +1,36 @@
-const plain = (data, count = 0) => {
+import _ from 'lodash';
+
+const formatValue = (value) => {
+    if(typeof value === 'string') {
+        return `'${value}'`;
+    }
+    if(_.isObject(value)) {
+        return '[complex value]';
+    } 
+    return value;
+}
+
+const plain = (data, path = '') => {
     const result = data.map((keyInfo) => {
         const type = keyInfo.type;
+        
+        const key = `${path}${path !== ''? '.':''}${keyInfo.key}`;
+        
         switch (type) {
             case 'added':
-                return `Property '${keyInfo.key}' was added with value: ${keyInfo.value}`;
+                return `Property '${key}' was added with value: ${formatValue(keyInfo.value)}`;
                 
             case 'deleted':
-                return `Property '${keyInfo.key}' was removed`;
+                return `Property '${key}' was removed`;
                 
             case 'unchanged':
                 return null;
 
             case 'updated':
-                return `Property '${keyInfo.key}' was updated. From '${keyInfo.value}' to '${keyInfo.value2}'`;
+                return `Property '${key}' was updated. From ${formatValue(keyInfo.value)} to ${formatValue(keyInfo.value2)}`;
 
             case 'nested':
-                return plain(keyInfo.value, count + 1);
+                return plain(keyInfo.value, key );
 
             default:
                 return null;
