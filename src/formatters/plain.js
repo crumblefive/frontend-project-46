@@ -36,7 +36,7 @@ const plain = (data, path = '') => {
                 return null;
         }
     }).filter(Boolean);
-
+    console.log(result.join('\n'))
     return result.join('\n');
 };
 

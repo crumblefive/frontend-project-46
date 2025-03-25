@@ -2,17 +2,17 @@ import json from './json.js';
 import plain from './plain.js';
 import stylish from './stylish.js';
 
-const formatData = (data, format = 'stylish') => {
+const formatter = (format = 'stylish') => {
     switch(format) {
         case 'plain':
-            return plain(data);
+            return plain;
         case 'stylish':
-            return stylish(data);
+            return stylish;
         case 'json':
-            return json(data);
+            return json;
         
         default: throw new Error (`Unknown format: ${format}`)
     }
 };
 
-export default formatData;
+export default formatter;

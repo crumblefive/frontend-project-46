@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import _ from 'lodash';
-import formatData from './formatters/formatData.js';
+import formatter from './formatters/formatter.js';
 import parser from './parser.js';
 import compare from './compare.js';
 
@@ -21,7 +21,7 @@ const gendiff = (filepath1, filepath2, options) => {
     const obj2 = parser(fileData2.file , fileData2.extention);
 
     const result = compare(obj1, obj2);
-    const finalResult = formatData(result, options);
+    const finalResult = formatter(options)(result);
     return finalResult;
 }
 

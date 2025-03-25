@@ -1,7 +1,17 @@
 import _ from 'lodash';
 
-const toStr = (value, count) => {
-    const tab = '    '.repeat(count + 2);
+
+const formTab = (depth, num = 2) => {
+    return ' '.repeat(4 * depth - num ); 
+}
+
+const formLine = (count, cb, key, value, sign) => {
+    return (`${formTab(count)}${sign} ${key}: ${cb(value, count +1)}`)
+
+}
+
+const toStr = (value, count = 0) => {
+    const tab = '    '.repeat(count);
     
     if (!_.isObject(value)) {
         return value;
@@ -9,29 +19,30 @@ const toStr = (value, count) => {
     const lines = Object.keys(value).map((key) => {
        return `${tab}${key}: ${toStr(value[key], count + 1)}`; 
     })
-    return `{\n${lines.join('\n')}\n${tab}}`
+    return `{\n${lines.join('\n')}\n${formTab(count, 4)}}`
     
 }
 
-const stylish = (data , count = 0) => {
+const stylish = (data , count = 1) => {
     const tab = '    '.repeat(count);   
     const result = data.map((keyInfo) => {
     const type = keyInfo.type; 
     switch (type){
         case 'added': 
-            return tab + `  + ${keyInfo.key}: ${toStr(keyInfo.value, count)}`;
+            return formLine(count, toStr, keyInfo.key, keyInfo.value, '+');
+            
         
         case 'deleted': 
-            return tab + `  - ${keyInfo.key}: ${toStr(keyInfo.value, count)}`;
+            return formLine(count, toStr, keyInfo.key, keyInfo.value, '-');
 
         case 'unchanged': 
-            return tab + `    ${keyInfo.key}: ${toStr(keyInfo.value, count)}`;
+            return formLine(count, toStr, keyInfo.key, keyInfo.value, ' ');;
 
         case 'updated': 
-            return tab + `  - ${keyInfo.key}: ${toStr(keyInfo.value, count)}\n${tab}  + ${keyInfo.key}: ${toStr(keyInfo.value2, count)}`;
+            return `${formLine(count, toStr, keyInfo.key, keyInfo.value, '-')}\n${formLine(count, toStr, keyInfo.key, keyInfo.value2, '+')}`;
 
         case 'nested': 
-            return `${tab}${keyInfo.key}: ${stylish(keyInfo.value, count +1)}`;
+            return formLine(count, stylish, keyInfo.key, keyInfo.value, ' ');
 
         default: 
             return null; 
@@ -39,8 +50,9 @@ const stylish = (data , count = 0) => {
 }
 ).filter(Boolean);
 
-console.log(`${tab}{\n${result.join('\n')}\n${tab}}`);
-return `${tab}{\n${result.join('\n')}\n${tab}}`
+// console.log(data); 
+// `${tab}{\n${result.join('\n')}\n${tab}}`
+return `{\n${result.join('\n')}\n${formTab(count, 4)}}`
 };
 
 export default stylish;
