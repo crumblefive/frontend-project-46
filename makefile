@@ -11,7 +11,7 @@ publish:
 	nmp publish --dry-run
 
 test:
-	npm test
+	npm test --test-reporter=spec
 
 test-coverage:
 	npm test -- --coverage --coverageProvider=v8

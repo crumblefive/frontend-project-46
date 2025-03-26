@@ -14,7 +14,7 @@ const plain = (data, path = '') => {
     const result = data.map((keyInfo) => {
         const type = keyInfo.type;
         
-        const key = `${path}${path !== ''? '.':''}${keyInfo.key}`;
+        const key = `${path}${path !== ''? '.':''}${keyInfo.key}`; 
         
         switch (type) {
             case 'added':
@@ -36,7 +36,6 @@ const plain = (data, path = '') => {
                 return null;
         }
     }).filter(Boolean);
-    console.log(result.join('\n'))
     return result.join('\n');
 };
 

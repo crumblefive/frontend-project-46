@@ -29,8 +29,7 @@ const stylish = (data , count = 1) => {
     const type = keyInfo.type; 
     switch (type){
         case 'added': 
-            return formLine(count, toStr, keyInfo.key, keyInfo.value, '+');
-            
+            return formLine(count, toStr, keyInfo.key, keyInfo.value, '+');    
         
         case 'deleted': 
             return formLine(count, toStr, keyInfo.key, keyInfo.value, '-');
