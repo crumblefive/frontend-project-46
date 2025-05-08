@@ -15,7 +15,8 @@ const toStr = (value, count = 0) => {
     
     if (!_.isObject(value)) {
         return value;
-    }
+    } 
+
     const lines = Object.keys(value).map((key) => {
        return `${tab}${key}: ${toStr(value[key], count + 1)}`; 
     })
@@ -24,7 +25,6 @@ const toStr = (value, count = 0) => {
 }
 
 const stylish = (data , count = 1) => {
-    const tab = '    '.repeat(count);   
     const result = data.map((keyInfo) => {
     const type = keyInfo.type; 
     switch (type){

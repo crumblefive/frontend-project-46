@@ -36,7 +36,10 @@ const plain = (data, path = '') => {
                 return null;
         }
     }).filter(Boolean);
+    
     return result.join('\n');
+
+    
 };
 
 export default plain;
