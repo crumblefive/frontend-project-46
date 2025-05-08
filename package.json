@@ -2,14 +2,13 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "[![Actions Status](https://github.com/crumblefive/frontend-project-46/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/crumblefive/frontend-project-46/actions)",
-  "main": "index.js",
+  "main": "./src/formatters/index.js",
   "type": "module",
   "bin": {
     "gendiff": "bin/gendiff.js"
   },
   "scripts": {
-    "test": "jest",
-    "lint": "eslint ."
+    "test": "jest"
   },
   "repository": {
     "type": "git",

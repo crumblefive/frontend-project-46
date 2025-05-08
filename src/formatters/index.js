@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import _ from 'lodash';
 import formatter from './formatter.js';
 import parser from '../parser.js';
 import compare from '../compare.js';
