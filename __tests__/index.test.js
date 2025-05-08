@@ -6,7 +6,7 @@
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import gendiff from '../src';
+import gendiff from '../src/formatters';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
