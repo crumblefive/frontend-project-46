@@ -49,8 +49,6 @@ const stylish = (data , count = 1) => {
 }
 ).filter(Boolean);
 
-// console.log(data); 
-// `${tab}{\n${result.join('\n')}\n${tab}}`
 return `{\n${result.join('\n')}\n${formTab(count, 4)}}`
 };
 
