@@ -1,11 +1,11 @@
-import _ from "lodash";
+import _ from 'lodash';
 
 const operation = {
-  added: "added",
-  deleted: "deleted",
-  updated: "updated",
-  unchanged: "unchanged",
-  nested: "nested",
+  added: 'added',
+  deleted: 'deleted',
+  updated: 'updated',
+  unchanged: 'unchanged',
+  nested: 'nested',
 };
 
 const compare = (obj1, obj2) => {
