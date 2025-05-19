@@ -1,9 +1,20 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
-
+import globals from 'globals';
+import pluginJs from '@eslint/js';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
-  {languageOptions: { globals: globals.browser }},
+  {
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.jest,
+      },
+    },
+  },
   pluginJs.configs.recommended,
+  {
+    rules: {
+      'no-prototype-builtins': 'off',
+    },
+  },
 ];
